@@ -14,7 +14,7 @@ DEFAULT_GAMMA_API_URL = "https://gamma-api.polymarket.com/markets"
 # Таймаут одного HTTP-запроса к Polymarket в секундах.
 DEFAULT_REQUEST_TIMEOUT_SECONDS = 20
 # Пауза между циклами опроса API в секундах.
-DEFAULT_POLL_INTERVAL_SECONDS = 300
+DEFAULT_POLL_INTERVAL_SECONDS = 1800
 # Размер одной страницы при пагинации списка рынков.
 DEFAULT_MARKETS_PAGE_LIMIT = 100
 
@@ -22,13 +22,13 @@ DEFAULT_MARKETS_PAGE_LIMIT = 100
 # Минимальный общий объем рынка, ниже которого рынок игнорируется.
 DEFAULT_MIN_VOLUME_NUM = 1000000.0
 # Минимальное изменение отслеживаемого исхода, которое считаем резким движением.
-DEFAULT_PRICE_CHANGE_THRESHOLD = 0.02
+DEFAULT_PRICE_CHANGE_THRESHOLD = 0.10
 # Окно в минутах для сравнения текущей цены с более старым снапшотом.
-DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 60
+DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 180
 # Минимальный прирост объема в долларах для триггера "whale_fight".
 DEFAULT_WHALE_VOLUME_DELTA = 30000.0
 # Окно в минутах, внутри которого измеряем прирост объема.
-DEFAULT_WHALE_VOLUME_WINDOW_MINUTES = 15
+DEFAULT_WHALE_VOLUME_WINDOW_MINUTES = 180
 # Предыдущее значение отслеживаемого исхода, от которого рынок считаем "почти решенным".
 DEFAULT_GHOST_PREVIOUS_THRESHOLD = 0.99
 # Текущее значение отслеживаемого исхода, ниже которого считаем, что рынок "рухнул".
