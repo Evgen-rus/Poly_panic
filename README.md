@@ -2,32 +2,6 @@
 
 Консольный мониторинг рынков Polymarket.
 
-## Быстрый старт
-
-Запуск одного прохода:
-
-```powershell
-venv\Scripts\python.exe app.py --once --top
-```
-
-Постоянный режим:
-
-```powershell
-venv\Scripts\python.exe app.py
-```
-
-Главные настройки находятся в `poly_panic/config.py`:
-- `DEFAULT_MIN_VOLUME_NUM`
-- `DEFAULT_EXCLUDE_SPORT_MARKETS`
-- `DEFAULT_REQUIRED_KEYWORDS`
-- `DEFAULT_EXCLUDED_KEYWORDS`
-- `DEFAULT_WHALE_VOLUME_DELTA`
-
-Если удалить `data/poly_panic.db`, следующий запуск будет как первый:
-- база создастся заново;
-- история цен и объемов обнулится;
-- `top` сначала будет пустым.
-
 Скрипт:
 - опрашивает активные рынки Polymarket;
 - сохраняет снимки в SQLite;
@@ -103,28 +77,6 @@ Ctrl+C
 - новые рынки будут считаться относительно пустой базы.
 
 Это нормальное поведение.
-
-## Если удалить базу данных
-
-Если удалить `data/poly_panic.db`, следующий запуск снова будет как первый.
-
-То есть:
-- база создастся заново автоматически;
-- накопленная история цен и объемов пропадет;
-- алерты будут слабее до накопления новых снапшотов;
-- `top` снова станет пустым на старте.
-
-Удалить базу можно так:
-
-```powershell
-Remove-Item .\data\poly_panic.db
-```
-
-После этого просто снова запусти:
-
-```powershell
-venv\Scripts\python.exe app.py --once
-```
 
 ## Что видно в терминале
 
