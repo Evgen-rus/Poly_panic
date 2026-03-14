@@ -5,6 +5,14 @@ from datetime import datetime
 from poly_panic.models import Alert
 
 
+TRIGGER_TITLES = {
+    "whale_fight": "Всплеск объема",
+    "price_explosion": "Резкое движение цены",
+    "ghost_market": "Обвал почти решенного рынка",
+    "absurd_new_market": "Странный новый рынок",
+}
+
+
 def print_run_header(
     observed_at: datetime,
     markets_count: int,
@@ -24,13 +32,21 @@ def print_run_header(
 
 def print_alert(alert: Alert) -> None:
     print("-" * 80)
-    print(f"[{alert.trigger_type}] {alert.question}")
+    print(f"Сигнал: {_get_trigger_title(alert.trigger_type)}")
+    print(f"Рынок: {alert.question}")
     if alert.category:
         print(f"Категория: {alert.category}")
     if alert.yes_price is not None:
         label = alert.outcome_label or "tracked outcome"
         print(f"Текущий исход: {label} = {alert.yes_price * 100:.1f}%")
-    print(alert.summary)
+
+    if alert.delta_price is not None:
+        direction = "рост" if alert.delta_price > 0 else "падение"
+        print(f"Движение цены: {direction} на {abs(alert.delta_price) * 100:.1f} п.п.")
+    if alert.delta_volume is not None:
+        print(f"Прирост объема: ${alert.delta_volume:,.0f}")
+
+    print(f"Что произошло: {alert.summary}")
     if alert.slug:
         print(f"Slug: {alert.slug}")
 
@@ -53,3 +69,7 @@ def print_top_markets(top_markets: list[tuple[str, float, float | None, float | 
             f"{index}. {question} | delta={delta * 100:.1f} п.п. | "
             f"{old_label} -> {current_label}"
         )
+
+
+def _get_trigger_title(trigger_type: str) -> str:
+    return TRIGGER_TITLES.get(trigger_type, trigger_type)
