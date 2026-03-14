@@ -22,7 +22,7 @@ DEFAULT_MARKETS_PAGE_LIMIT = 100
 # Минимальный общий объем рынка, ниже которого рынок игнорируется.
 DEFAULT_MIN_VOLUME_NUM = 1000000.0
 # Минимальное изменение отслеживаемого исхода, которое считаем резким движением.
-DEFAULT_PRICE_CHANGE_THRESHOLD = 0.20
+DEFAULT_PRICE_CHANGE_THRESHOLD = 0.02
 # Окно в минутах для сравнения текущей цены с более старым снапшотом.
 DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 60
 # Минимальный прирост объема в долларах для триггера "whale_fight".
