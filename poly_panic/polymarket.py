@@ -70,9 +70,10 @@ class PolymarketGammaClient:
         outcomes = self._parse_jsonish_list(raw_market.get("outcomes"))
         outcome_prices = self._parse_jsonish_list(raw_market.get("outcomePrices"))
         clob_token_ids = self._parse_jsonish_list(raw_market.get("clobTokenIds"))
-
-        yes_index = self._find_yes_index(outcomes)
-        yes_price = self._extract_price(outcome_prices, yes_index)
+        tracked_outcome_label, tracked_price = self._pick_tracked_outcome(
+            outcomes,
+            outcome_prices,
+        )
         volume_num = self._to_float(raw_market.get("volumeNum") or raw_market.get("volume"))
 
         return MarketRecord(
@@ -80,9 +81,14 @@ class PolymarketGammaClient:
             question=question,
             slug=self._clean_optional_str(raw_market.get("slug")),
             category=self._clean_optional_str(raw_market.get("category")),
-            yes_price=yes_price,
+            yes_price=tracked_price,
+            tracked_outcome_label=tracked_outcome_label,
+            outcomes=outcomes,
             volume_num=volume_num,
             clob_token_ids=clob_token_ids,
+            sports_market_type=self._clean_optional_str(raw_market.get("sportsMarketType")),
+            series_slug=self._extract_series_slug(raw_market.get("events")),
+            fee_type=self._clean_optional_str(raw_market.get("feeType")),
         )
 
     @staticmethod
@@ -110,19 +116,54 @@ class PolymarketGammaClient:
                 return [str(item).strip() for item in parsed if str(item).strip()]
         return []
 
+    def _pick_tracked_outcome(
+        self,
+        outcomes: list[str],
+        outcome_prices: list[str],
+    ) -> tuple[str | None, float | None]:
+        if not outcomes or not outcome_prices:
+            return None, None
+
+        tracked_index = self._find_yes_index(outcomes)
+        if tracked_index is None:
+            tracked_index = 0
+
+        if tracked_index >= len(outcome_prices):
+            tracked_index = 0
+        if tracked_index >= len(outcomes):
+            return None, None
+
+        return outcomes[tracked_index], self._to_optional_float(outcome_prices[tracked_index])
+
     @staticmethod
-    def _find_yes_index(outcomes: list[str]) -> int:
+    def _find_yes_index(outcomes: list[str]) -> int | None:
         for index, outcome in enumerate(outcomes):
             if outcome.lower() == "yes":
                 return index
-        return 0
+        return None
 
-    def _extract_price(self, outcome_prices: list[str], yes_index: int) -> float | None:
-        if not outcome_prices:
+    @staticmethod
+    def _extract_series_slug(events: Any) -> str | None:
+        if not isinstance(events, list) or not events:
             return None
-        if yes_index >= len(outcome_prices):
-            yes_index = 0
-        return self._to_optional_float(outcome_prices[yes_index])
+
+        first_event = events[0]
+        if not isinstance(first_event, dict):
+            return None
+
+        series_slug = first_event.get("seriesSlug")
+        if series_slug:
+            return str(series_slug).strip() or None
+
+        series = first_event.get("series")
+        if isinstance(series, list) and series:
+            first_series = series[0]
+            if isinstance(first_series, dict):
+                slug = first_series.get("slug")
+                if slug:
+                    return str(slug).strip() or None
+
+        return None
 
     @staticmethod
     def _to_optional_float(value: Any) -> float | None:

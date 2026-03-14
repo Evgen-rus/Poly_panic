@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from datetime import datetime, timedelta
 
@@ -67,6 +67,7 @@ def _detect_absurd_new_market(
         ),
         observed_at=observed_at,
         yes_price=market.yes_price,
+        outcome_label=market.tracked_outcome_label,
         category=market.category,
         slug=market.slug,
     )
@@ -89,17 +90,18 @@ def _detect_price_explosion(
     if abs(delta) < settings.price_change_threshold:
         return None
 
-    direction = "выросла" if delta > 0 else "упала"
+    direction = "вырос" if delta > 0 else "упал"
     return Alert(
         trigger_type="price_explosion",
         market_id=market.market_id,
         question=market.question,
         summary=(
-            f"Цена {direction} на {abs(delta) * 100:.1f} п.п. "
+            f"Исход {direction} на {abs(delta) * 100:.1f} п.п. "
             f"за {settings.price_change_lookback_minutes} минут."
         ),
         observed_at=observed_at,
         yes_price=market.yes_price,
+        outcome_label=market.tracked_outcome_label,
         delta_price=delta,
         category=market.category,
         slug=market.slug,
@@ -128,6 +130,7 @@ def _detect_whale_fight(
         ),
         observed_at=observed_at,
         yes_price=market.yes_price,
+        outcome_label=market.tracked_outcome_label,
         delta_volume=delta_volume,
         category=market.category,
         slug=market.slug,
@@ -158,6 +161,7 @@ def _detect_ghost_market(
             ),
             observed_at=observed_at,
             yes_price=market.yes_price,
+            outcome_label=market.tracked_outcome_label,
             delta_price=market.yes_price - previous_snapshot.yes_price,
             category=market.category,
             slug=market.slug,

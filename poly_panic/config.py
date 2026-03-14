@@ -9,26 +9,62 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_DB_PATH = BASE_DIR / "data" / "poly_panic.db"
+# URL публичного Gamma API для списка рынков.
 DEFAULT_GAMMA_API_URL = "https://gamma-api.polymarket.com/markets"
+# Таймаут одного HTTP-запроса к Polymarket в секундах.
 DEFAULT_REQUEST_TIMEOUT_SECONDS = 20
+# Пауза между циклами опроса API в секундах.
 DEFAULT_POLL_INTERVAL_SECONDS = 300
+# Размер одной страницы при пагинации списка рынков.
 DEFAULT_MARKETS_PAGE_LIMIT = 100
+
+# Фильтрация рынков
+# Минимальный общий объем рынка, ниже которого рынок игнорируется.
 DEFAULT_MIN_VOLUME_NUM = 1.0
+# Минимальное изменение отслеживаемого исхода, которое считаем резким движением.
 DEFAULT_PRICE_CHANGE_THRESHOLD = 0.30
+# Окно в минутах для сравнения текущей цены с более старым снапшотом.
 DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 60
+# Минимальный прирост объема в долларах для триггера "whale_fight".
 DEFAULT_WHALE_VOLUME_DELTA = 10000.0
+# Окно в минутах, внутри которого измеряем прирост объема.
 DEFAULT_WHALE_VOLUME_WINDOW_MINUTES = 15
+# Предыдущее значение отслеживаемого исхода, от которого рынок считаем "почти решенным".
 DEFAULT_GHOST_PREVIOUS_THRESHOLD = 0.99
+# Текущее значение отслеживаемого исхода, ниже которого считаем, что рынок "рухнул".
 DEFAULT_GHOST_CURRENT_THRESHOLD = 0.50
+# Защита от повторных алертов по одному и тому же рынку и триггеру.
 DEFAULT_ALERT_COOLDOWN_MINUTES = 180
+# Категории, где ищем "абсурдные" новые рынки.
 DEFAULT_ABSURD_CATEGORIES = ["Pop Culture", "Science", "Business"]
+# Ключевые слова для поиска странных или мемных новых рынков.
 DEFAULT_ABSURD_KEYWORDS = ["Elon Musk", "Aliens", "GTA 6", "Kanye", "Meme"]
+# Если True, то рынки со спортивными признаками исключаются из мониторинга.
+DEFAULT_EXCLUDE_SPORT_MARKETS = True
+# Белый список категорий. Пустой список означает "брать все категории".
+DEFAULT_INCLUDE_CATEGORIES: list[str] = []
+# Черный список категорий. Если категория совпала, рынок пропускаем.
+DEFAULT_EXCLUDE_CATEGORIES: list[str] = []
+# Ключевые слова, которые обязательно должны быть в вопросе/slug/outcomes.
+DEFAULT_REQUIRED_KEYWORDS = ["trump", "fed", "elon", "bitcoin", "election", "war"]
+# Ключевые слова, по которым рынок исключается.
+DEFAULT_EXCLUDED_KEYWORDS = ["weather"]
+# Уровень логирования приложения: DEBUG, INFO, WARNING, ERROR.
+DEFAULT_LOG_LEVEL = "INFO"
+# Файл, куда дублируются логи для последующего разбора.
+DEFAULT_LOG_FILE = BASE_DIR / "logs" / "poly_panic.log"
 
 
 def _split_csv(value: str, default: list[str]) -> list[str]:
     if not value.strip():
         return list(default)
     return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _to_bool(value: str | None, default: bool) -> bool:
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
 @dataclass(slots=True)
@@ -52,6 +88,21 @@ class Settings:
     absurd_keywords: list[str] = field(
         default_factory=lambda: list(DEFAULT_ABSURD_KEYWORDS)
     )
+    exclude_sport_markets: bool = DEFAULT_EXCLUDE_SPORT_MARKETS
+    include_categories: list[str] = field(
+        default_factory=lambda: list(DEFAULT_INCLUDE_CATEGORIES)
+    )
+    exclude_categories: list[str] = field(
+        default_factory=lambda: list(DEFAULT_EXCLUDE_CATEGORIES)
+    )
+    required_keywords: list[str] = field(
+        default_factory=lambda: list(DEFAULT_REQUIRED_KEYWORDS)
+    )
+    excluded_keywords: list[str] = field(
+        default_factory=lambda: list(DEFAULT_EXCLUDED_KEYWORDS)
+    )
+    log_level: str = DEFAULT_LOG_LEVEL
+    log_file: Path = DEFAULT_LOG_FILE
 
 
 def load_settings() -> Settings:
@@ -110,4 +161,26 @@ def load_settings() -> Settings:
             os.getenv("ABSURD_KEYWORDS", ""),
             DEFAULT_ABSURD_KEYWORDS,
         ),
+        exclude_sport_markets=_to_bool(
+            os.getenv("EXCLUDE_SPORT_MARKETS"),
+            DEFAULT_EXCLUDE_SPORT_MARKETS,
+        ),
+        include_categories=_split_csv(
+            os.getenv("INCLUDE_CATEGORIES", ""),
+            DEFAULT_INCLUDE_CATEGORIES,
+        ),
+        exclude_categories=_split_csv(
+            os.getenv("EXCLUDE_CATEGORIES", ""),
+            DEFAULT_EXCLUDE_CATEGORIES,
+        ),
+        required_keywords=_split_csv(
+            os.getenv("REQUIRED_KEYWORDS", ""),
+            DEFAULT_REQUIRED_KEYWORDS,
+        ),
+        excluded_keywords=_split_csv(
+            os.getenv("EXCLUDED_KEYWORDS", ""),
+            DEFAULT_EXCLUDED_KEYWORDS,
+        ),
+        log_level=os.getenv("LOG_LEVEL", DEFAULT_LOG_LEVEL).strip().upper(),
+        log_file=Path(os.getenv("LOG_FILE", str(DEFAULT_LOG_FILE))),
     )
