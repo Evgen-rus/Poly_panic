@@ -41,5 +41,6 @@ class Alert:
     outcome_label: str | None = None
     delta_price: float | None = None
     delta_volume: float | None = None
+    total_volume: float | None = None
     category: str | None = None
     slug: str | None = None

@@ -45,6 +45,8 @@ def print_alert(alert: Alert) -> None:
         print(f"Движение цены: {direction} на {abs(alert.delta_price) * 100:.1f} п.п.")
     if alert.delta_volume is not None:
         print(f"Прирост объема: ${alert.delta_volume:,.0f}")
+    if alert.total_volume is not None:
+        print(f"Текущий общий объем: ${alert.total_volume:,.0f}")
 
     print(f"Что произошло: {alert.summary}")
     if alert.slug:

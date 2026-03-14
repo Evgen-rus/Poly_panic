@@ -73,6 +73,7 @@ def _detect_absurd_new_market(
         observed_at=observed_at,
         yes_price=market.yes_price,
         outcome_label=market.tracked_outcome_label,
+        total_volume=market.volume_num,
         category=market.category,
         slug=market.slug,
     )
@@ -126,6 +127,7 @@ def _detect_price_explosion(
         yes_price=market.yes_price,
         outcome_label=market.tracked_outcome_label,
         delta_price=delta,
+        total_volume=market.volume_num,
         category=market.category,
         slug=market.slug,
     )
@@ -155,6 +157,7 @@ def _detect_whale_fight(
         yes_price=market.yes_price,
         outcome_label=market.tracked_outcome_label,
         delta_volume=delta_volume,
+        total_volume=market.volume_num,
         category=market.category,
         slug=market.slug,
     )
@@ -186,6 +189,7 @@ def _detect_ghost_market(
             yes_price=market.yes_price,
             outcome_label=market.tracked_outcome_label,
             delta_price=market.yes_price - previous_snapshot.yes_price,
+            total_volume=market.volume_num,
             category=market.category,
             slug=market.slug,
         )
