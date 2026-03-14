@@ -20,6 +20,7 @@ from poly_panic.detectors import detect_alerts
 from poly_panic.filters import get_filter_reason, summarize_active_filters
 from poly_panic.polymarket import PolymarketGammaClient
 from poly_panic.storage import Storage
+from poly_panic.telegram import TelegramNotifier
 
 
 LOGGER = logging.getLogger("poly_panic")
@@ -36,6 +37,11 @@ def parse_args() -> argparse.Namespace:
         "--top",
         action="store_true",
         help="После прохода показать топ волатильных рынков",
+    )
+    parser.add_argument(
+        "--telegram-test",
+        action="store_true",
+        help="Отправить тестовое сообщение в Telegram и завершиться",
     )
     return parser.parse_args()
 
@@ -65,6 +71,19 @@ def main() -> int:
         settings.log_file,
     )
     LOGGER.info("Active filters: %s", summarize_active_filters(settings) or ["none"])
+    notifier = TelegramNotifier(
+        bot_token=settings.telegram_bot_token,
+        chat_id=settings.telegram_chat_id,
+        request_timeout_seconds=settings.request_timeout_seconds,
+    )
+    if notifier.enabled:
+        LOGGER.info("Telegram notifications enabled")
+    else:
+        LOGGER.info("Telegram notifications disabled")
+
+    if args.telegram_test:
+        return run_telegram_test(notifier)
+
     storage = Storage(settings.db_path)
     client = PolymarketGammaClient(
         base_url=settings.gamma_api_url,
@@ -74,11 +93,11 @@ def main() -> int:
 
     try:
         if args.once:
-            run_cycle(client, storage, settings, show_top=args.top)
+            run_cycle(client, storage, settings, notifier, show_top=args.top)
             return 0
 
         while True:
-            run_cycle(client, storage, settings, show_top=args.top)
+            run_cycle(client, storage, settings, notifier, show_top=args.top)
             time.sleep(settings.poll_interval_seconds)
     except KeyboardInterrupt:
         LOGGER.info("Application stopped by user")
@@ -88,10 +107,33 @@ def main() -> int:
         storage.close()
 
 
+def run_telegram_test(notifier: TelegramNotifier) -> int:
+    if not notifier.enabled:
+        LOGGER.error("Telegram test requested, but token/chat_id are not configured")
+        print("Telegram не настроен: проверь TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID в .env")
+        return 1
+
+    message = (
+        "Poly Panic: тест Telegram-подключения\n"
+        f"Время UTC: {datetime.now(timezone.utc).isoformat()}"
+    )
+    try:
+        notifier.send_text(message)
+    except RequestException:
+        LOGGER.exception("Telegram test message failed")
+        print("Не удалось отправить тестовое сообщение в Telegram. Смотри logs/poly_panic.log")
+        return 1
+
+    LOGGER.info("Telegram test message sent")
+    print("Тестовое сообщение отправлено в Telegram.")
+    return 0
+
+
 def run_cycle(
     client: PolymarketGammaClient,
     storage: Storage,
     settings: Settings,
+    notifier: TelegramNotifier,
     show_top: bool,
 ) -> None:
     observed_at = datetime.now(timezone.utc)
@@ -157,6 +199,12 @@ def run_cycle(
         new_markets_count,
         len(emitted_alerts),
     )
+    if emitted_alerts and notifier.enabled:
+        try:
+            sent_count = notifier.send_alerts(emitted_alerts)
+            LOGGER.info("Telegram sent alerts: %s", sent_count)
+        except RequestException:
+            LOGGER.exception("Telegram notification failed")
 
     print_run_header(
         observed_at,

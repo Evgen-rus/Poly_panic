@@ -26,6 +26,13 @@
 
 Для личного использования удобнее менять значения прямо в `poly_panic/config.py`.
 
+Для отправки алертов в Telegram добавь в `.env`:
+
+```dotenv
+TELEGRAM_BOT_TOKEN=123456:your_bot_token
+TELEGRAM_CHAT_ID=-1001234567890
+```
+
 Самые важные:
 - `DEFAULT_POLL_INTERVAL_SECONDS` — как часто опрашивать API
 - `DEFAULT_MIN_VOLUME_NUM` — минимальный общий объем рынка
@@ -56,6 +63,14 @@ venv\Scripts\python.exe app.py --once --top
 ```powershell
 venv\Scripts\python.exe app.py
 ```
+
+Проверка Telegram без ожидания алерта:
+
+```powershell
+venv\Scripts\python.exe app.py --telegram-test
+```
+
+Если `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` заданы, найденные алерты будут печататься в терминал и параллельно отправляться в Telegram.
 
 Остановка постоянного режима:
 
