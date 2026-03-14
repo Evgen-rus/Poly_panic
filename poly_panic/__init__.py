@@ -1,0 +1,1 @@
+"""Poly Panic console MVP."""
