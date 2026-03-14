@@ -39,19 +39,24 @@ def detect_alerts(
 def _detect_absurd_new_market(
     market: MarketRecord, settings: Settings, observed_at: datetime
 ) -> Alert | None:
-    if not market.category:
+    matched_group = _match_absurd_group(market, settings)
+    if matched_group is None:
         return None
 
-    categories = {value.lower() for value in settings.absurd_categories}
-    if market.category.lower() not in categories:
-        return None
-
-    question_lower = market.question.lower()
+    searchable_text = " ".join(
+        [
+            market.question,
+            market.slug or "",
+            " ".join(market.outcomes),
+            " ".join(market.tag_labels),
+            " ".join(market.tag_slugs),
+        ]
+    ).lower()
     matched_keyword = next(
         (
             keyword
             for keyword in settings.absurd_keywords
-            if keyword.lower() in question_lower
+            if keyword.lower() in searchable_text
         ),
         None,
     )
@@ -63,7 +68,7 @@ def _detect_absurd_new_market(
         market_id=market.market_id,
         question=market.question,
         summary=(
-            f"Новый рынок в категории {market.category}: найден ключ '{matched_keyword}'."
+            f"Новый рынок в группе '{matched_group}': найден ключ '{matched_keyword}'."
         ),
         observed_at=observed_at,
         yes_price=market.yes_price,
@@ -71,6 +76,24 @@ def _detect_absurd_new_market(
         category=market.category,
         slug=market.slug,
     )
+
+
+def _match_absurd_group(market: MarketRecord, settings: Settings) -> str | None:
+    market_tags = {
+        value.lower(): value
+        for value in [*market.tag_labels, *market.tag_slugs]
+        if value.strip()
+    }
+    for group in settings.absurd_tags:
+        if group.lower() in market_tags:
+            return market_tags[group.lower()]
+
+    if market.category:
+        categories = {value.lower() for value in settings.absurd_categories}
+        if market.category.lower() in categories:
+            return market.category
+
+    return None
 
 
 def _detect_price_explosion(

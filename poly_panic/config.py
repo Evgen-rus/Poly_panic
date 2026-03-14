@@ -26,7 +26,7 @@ DEFAULT_PRICE_CHANGE_THRESHOLD = 0.20
 # Окно в минутах для сравнения текущей цены с более старым снапшотом.
 DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 60
 # Минимальный прирост объема в долларах для триггера "whale_fight".
-DEFAULT_WHALE_VOLUME_DELTA = 100000.0
+DEFAULT_WHALE_VOLUME_DELTA = 30000.0
 # Окно в минутах, внутри которого измеряем прирост объема.
 DEFAULT_WHALE_VOLUME_WINDOW_MINUTES = 15
 # Предыдущее значение отслеживаемого исхода, от которого рынок считаем "почти решенным".
@@ -35,20 +35,31 @@ DEFAULT_GHOST_PREVIOUS_THRESHOLD = 0.99
 DEFAULT_GHOST_CURRENT_THRESHOLD = 0.50
 # Защита от повторных алертов по одному и тому же рынку и триггеру.
 DEFAULT_ALERT_COOLDOWN_MINUTES = 180
-# Категории, где ищем "абсурдные" новые рынки.
-DEFAULT_ABSURD_CATEGORIES = ["Pop Culture", "Science", "Business"]
+# Legacy fallback. В текущем Polymarket category обычно пустая, лучше использовать теги ниже.
+# DEFAULT_ABSURD_CATEGORIES = ["Pop Culture", "Science", "Business"]
+DEFAULT_ABSURD_CATEGORIES = []
+# Теги, где ищем "абсурдные" новые рынки.
+#DEFAULT_ABSURD_TAGS = ["Pop Culture", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment", "Sports", "Science", "Business", "Politics", "Economy", "Technology", "Entertainment"]
+DEFAULT_ABSURD_TAGS = []
 # Ключевые слова для поиска странных или мемных новых рынков.
-DEFAULT_ABSURD_KEYWORDS = ["Elon Musk", "Aliens", "GTA 6", "Kanye", "Meme"]
+#DEFAULT_ABSURD_KEYWORDS = ["Elon Musk", "Aliens", "GTA 6", "Kanye", "Meme"]
+DEFAULT_ABSURD_KEYWORDS = []
 # Если True, то рынки со спортивными признаками исключаются из мониторинга.
 DEFAULT_EXCLUDE_SPORT_MARKETS = True
-# Белый список категорий. Пустой список означает "брать все категории".
+# Legacy fallback. В текущем Polymarket category обычно пустая.
 DEFAULT_INCLUDE_CATEGORIES: list[str] = []
-# Черный список категорий. Если категория совпала, рынок пропускаем.
+# Legacy fallback. В текущем Polymarket category обычно пустая.
 DEFAULT_EXCLUDE_CATEGORIES: list[str] = []
+# Белый список тегов. Пустой список означает "брать любые теги".
+DEFAULT_INCLUDE_TAGS: list[str] = []
+# Черный список тегов. Если тег совпал, рынок пропускаем.
+DEFAULT_EXCLUDE_TAGS: list[str] = []
 # Ключевые слова, которые обязательно должны быть в вопросе/slug/outcomes.
-DEFAULT_REQUIRED_KEYWORDS = ["trump", "fed", "elon", "bitcoin", "election", "iran", "china", "musk", "ai", "crypto", "russia", "ukraine", "jesus", "apocalypse", "policy"]
+#DEFAULT_REQUIRED_KEYWORDS = ["trump", "fed", "elon", "bitcoin", "election", "iran", "china", "musk", "ai", "crypto", "russia", "ukraine", "jesus", "apocalypse", "policy"]
+DEFAULT_REQUIRED_KEYWORDS = []
 # Ключевые слова, по которым рынок исключается.
-DEFAULT_EXCLUDED_KEYWORDS = ["weather"]
+#DEFAULT_EXCLUDED_KEYWORDS = ["weather"]
+DEFAULT_EXCLUDED_KEYWORDS = []
 # Уровень логирования приложения: DEBUG, INFO, WARNING, ERROR.
 DEFAULT_LOG_LEVEL = "INFO"
 # Файл, куда дублируются логи для последующего разбора.
@@ -85,6 +96,9 @@ class Settings:
     absurd_categories: list[str] = field(
         default_factory=lambda: list(DEFAULT_ABSURD_CATEGORIES)
     )
+    absurd_tags: list[str] = field(
+        default_factory=lambda: list(DEFAULT_ABSURD_TAGS)
+    )
     absurd_keywords: list[str] = field(
         default_factory=lambda: list(DEFAULT_ABSURD_KEYWORDS)
     )
@@ -94,6 +108,12 @@ class Settings:
     )
     exclude_categories: list[str] = field(
         default_factory=lambda: list(DEFAULT_EXCLUDE_CATEGORIES)
+    )
+    include_tags: list[str] = field(
+        default_factory=lambda: list(DEFAULT_INCLUDE_TAGS)
+    )
+    exclude_tags: list[str] = field(
+        default_factory=lambda: list(DEFAULT_EXCLUDE_TAGS)
     )
     required_keywords: list[str] = field(
         default_factory=lambda: list(DEFAULT_REQUIRED_KEYWORDS)
@@ -157,6 +177,10 @@ def load_settings() -> Settings:
             os.getenv("ABSURD_CATEGORIES", ""),
             DEFAULT_ABSURD_CATEGORIES,
         ),
+        absurd_tags=_split_csv(
+            os.getenv("ABSURD_TAGS", ""),
+            DEFAULT_ABSURD_TAGS,
+        ),
         absurd_keywords=_split_csv(
             os.getenv("ABSURD_KEYWORDS", ""),
             DEFAULT_ABSURD_KEYWORDS,
@@ -172,6 +196,14 @@ def load_settings() -> Settings:
         exclude_categories=_split_csv(
             os.getenv("EXCLUDE_CATEGORIES", ""),
             DEFAULT_EXCLUDE_CATEGORIES,
+        ),
+        include_tags=_split_csv(
+            os.getenv("INCLUDE_TAGS", ""),
+            DEFAULT_INCLUDE_TAGS,
+        ),
+        exclude_tags=_split_csv(
+            os.getenv("EXCLUDE_TAGS", ""),
+            DEFAULT_EXCLUDE_TAGS,
         ),
         required_keywords=_split_csv(
             os.getenv("REQUIRED_KEYWORDS", ""),

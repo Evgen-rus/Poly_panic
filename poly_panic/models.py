@@ -10,6 +10,8 @@ class MarketRecord:
     question: str
     slug: str | None
     category: str | None
+    tag_labels: list[str]
+    tag_slugs: list[str]
     yes_price: float | None
     tracked_outcome_label: str | None
     outcomes: list[str]

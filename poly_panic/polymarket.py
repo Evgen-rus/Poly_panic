@@ -74,6 +74,7 @@ class PolymarketGammaClient:
             outcomes,
             outcome_prices,
         )
+        tag_labels, tag_slugs = self._extract_tags(raw_market.get("events"))
         volume_num = self._to_float(raw_market.get("volumeNum") or raw_market.get("volume"))
 
         return MarketRecord(
@@ -81,6 +82,8 @@ class PolymarketGammaClient:
             question=question,
             slug=self._clean_optional_str(raw_market.get("slug")),
             category=self._clean_optional_str(raw_market.get("category")),
+            tag_labels=tag_labels,
+            tag_slugs=tag_slugs,
             yes_price=tracked_price,
             tracked_outcome_label=tracked_outcome_label,
             outcomes=outcomes,
@@ -164,6 +167,42 @@ class PolymarketGammaClient:
                     return str(slug).strip() or None
 
         return None
+
+    @staticmethod
+    def _extract_tags(events: Any) -> tuple[list[str], list[str]]:
+        if not isinstance(events, list):
+            return [], []
+
+        tag_labels: list[str] = []
+        tag_slugs: list[str] = []
+        seen_labels: set[str] = set()
+        seen_slugs: set[str] = set()
+
+        for event in events:
+            if not isinstance(event, dict):
+                continue
+            tags = event.get("tags")
+            if not isinstance(tags, list):
+                continue
+            for tag in tags:
+                if not isinstance(tag, dict):
+                    continue
+
+                label = PolymarketGammaClient._clean_optional_str(tag.get("label"))
+                if label:
+                    label_key = label.lower()
+                    if label_key not in seen_labels:
+                        tag_labels.append(label)
+                        seen_labels.add(label_key)
+
+                slug = PolymarketGammaClient._clean_optional_str(tag.get("slug"))
+                if slug:
+                    slug_key = slug.lower()
+                    if slug_key not in seen_slugs:
+                        tag_slugs.append(slug)
+                        seen_slugs.add(slug_key)
+
+        return tag_labels, tag_slugs
 
     @staticmethod
     def _to_optional_float(value: Any) -> float | None:
