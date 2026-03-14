@@ -78,6 +78,32 @@ venv\Scripts\python.exe app.py --telegram-test
 Ctrl+C
 ```
 
+Если проект запущен как сервис `systemd`, используй такие команды:
+
+Запустить сервис:
+
+```bash
+systemctl start poly-panic.service
+```
+
+Перезапустить сервис:
+
+```bash
+systemctl restart poly-panic.service
+```
+
+Остановить сервис:
+
+```bash
+systemctl stop poly-panic.service
+```
+
+Посмотреть статус сервиса:
+
+```bash
+systemctl status poly-panic.service
+```
+
 ## Первый запуск
 
 Если базы еще нет, скрипт сам создаст:
