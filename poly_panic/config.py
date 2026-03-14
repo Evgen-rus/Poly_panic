@@ -22,7 +22,7 @@ DEFAULT_MARKETS_PAGE_LIMIT = 100
 # Минимальный общий объем рынка, ниже которого рынок игнорируется.
 DEFAULT_MIN_VOLUME_NUM = 1000000.0
 # Минимальное изменение отслеживаемого исхода, которое считаем резким движением.
-DEFAULT_PRICE_CHANGE_THRESHOLD = 1.00
+DEFAULT_PRICE_CHANGE_THRESHOLD = 0.20
 # Окно в минутах для сравнения текущей цены с более старым снапшотом.
 DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 60
 # Минимальный прирост объема в долларах для триггера "whale_fight".
@@ -46,7 +46,7 @@ DEFAULT_INCLUDE_CATEGORIES: list[str] = []
 # Черный список категорий. Если категория совпала, рынок пропускаем.
 DEFAULT_EXCLUDE_CATEGORIES: list[str] = []
 # Ключевые слова, которые обязательно должны быть в вопросе/slug/outcomes.
-DEFAULT_REQUIRED_KEYWORDS = ["trump", "fed", "elon", "bitcoin", "election", "war"]
+DEFAULT_REQUIRED_KEYWORDS = ["trump", "fed", "elon", "bitcoin", "election", "iran", "china", "musk", "ai", "crypto", "russia", "ukraine", "jesus", "apocalypse", "policy"]
 # Ключевые слова, по которым рынок исключается.
 DEFAULT_EXCLUDED_KEYWORDS = ["weather"]
 # Уровень логирования приложения: DEBUG, INFO, WARNING, ERROR.
