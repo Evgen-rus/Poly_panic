@@ -54,7 +54,7 @@ DEFAULT_EXCLUDE_TAGS: list[str] = []
 # Ключевые слова, которые обязательно должны быть в вопросе/slug/outcomes.
 DEFAULT_REQUIRED_KEYWORDS: list[str] = []
 # Ключевые слова, по которым рынок исключается.
-DEFAULT_EXCLUDED_KEYWORDS: list[str] = []
+DEFAULT_EXCLUDED_KEYWORDS: list[str] = ["champions league", "premier league", "presidential nomination", "presidential election", "mayor election", "academy awards"]
 # Уровень логирования приложения: DEBUG, INFO, WARNING, ERROR.
 DEFAULT_LOG_LEVEL = "INFO"
 # Файл, куда дублируются логи для последующего разбора.
