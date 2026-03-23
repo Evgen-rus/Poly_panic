@@ -26,7 +26,7 @@ DEFAULT_PRICE_CHANGE_THRESHOLD = 0.10
 # Окно в минутах для сравнения текущей цены с более старым снапшотом.
 DEFAULT_PRICE_CHANGE_LOOKBACK_MINUTES = 180
 # Минимальный прирост объема в долларах для триггера "whale_fight".
-DEFAULT_WHALE_VOLUME_DELTA = 30000.0
+DEFAULT_WHALE_VOLUME_DELTA = 200000.0
 # Окно в минутах, внутри которого измеряем прирост объема.
 DEFAULT_WHALE_VOLUME_WINDOW_MINUTES = 180
 # Предыдущее значение отслеживаемого исхода, от которого рынок считаем "почти решенным".
